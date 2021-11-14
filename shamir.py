@@ -1,13 +1,13 @@
 import random
 import itertools
-from math import ceil
+
 
 MAX_COEFF = 10**4
 
 SHARES = 5
 MIN_RECONSTRUCT = 3
-SECRET = 614
-PRIME = 655370000
+SECRET = 1234
+PRIME = 65537
 
 
 def reconstruct_secret(shares):
@@ -29,13 +29,13 @@ def reconstruct_secret(shares):
                 # print(f'rownanie {i} to {xj / (xj - xi)}')
                 prod *= (xj / (xj - xi))
 
-        print(f'Iloczyn równań to {prod}')
+        # print(f'Iloczyn równań to {prod}')
         prod *= yi
-        print(f'partial product = {prod}, modulo = {prod % mod}, bo yi = {yi}')
+        # print(f'partial product = {prod}, modulo = {prod % mod}, bo yi = {yi}')
         sums += prod
 
-    print(f'Sums = {sums}, sums%mod = {sums % mod}\n')
-    return ceil(sums % mod)
+    # print(f'Sums = {sums}, sums%mod = {sums % mod}\n')
+    return round(sums % mod, 0)
 
 
 def find_x(x, polynom):
@@ -67,14 +67,14 @@ def generate_shares(n, m, secret, mod):
     :return: zwraca listę udziałów
     """
     polynom = generate_polynomial(m, secret)
-    print(f'Polynomial {polynom}')
+    print(f'Wielomian {polynom}')
     shares = []
     generated = []
 
     for i in range(1, n+1):
-        # print("TERM", i)
-        # print(find_x(i + 1, polynom))
-        # print(find_x(i + 1, polynom) % mod)
+        print("TERM", i)
+        print(find_x(i + 1, polynom))
+        print(find_x(i + 1, polynom) % mod)
         shares.append((i, (find_x(i, polynom) % mod), mod))
 
     return shares
@@ -83,30 +83,31 @@ def generate_shares(n, m, secret, mod):
 if __name__ == "__main__":
     shares = generate_shares(SHARES, MIN_RECONSTRUCT, SECRET, PRIME)
     print(f'Wygenerowano udziały {shares}')
-    for i in range(3):
+    for z in range(3):
         print(" ")
         pool = random.sample(shares, MIN_RECONSTRUCT)
         print(f'Na podstawie {pool}')
         recovered_secret = reconstruct_secret(pool)
         print(f'Odzyskano sekret {recovered_secret}')
 
-    # attempts = 0
-    # success = 0
-    # bad_sets = []
-    # perms = list(itertools.permutations(shares))
-    # for i in range(len(perms)):
-    #     attempts += 1
-    #     if int(reconstruct_secret(perms[i][0:MIN_RECONSTRUCT])) == SECRET:
-    #         success += 1
-    #     else:
-    #         bad_sets.append(perms[i][0:MIN_RECONSTRUCT])
-    #
-    # print(f'Tries: {attempts}, successes: {success}, rate {success/attempts*100}%')
-    # print(bad_sets)
-    # # for set in bad_sets:
-    # #     numbers = []
-    # #     for i in set:
-    # #         numbers.append(i[0])
-    # #     numbers.sort()
-    # #     print(numbers)
-    # #     print("===")
+    attempts = 0
+    success = 0
+    bad_sets = []
+    perms = list(itertools.permutations(shares))
+    for z in range(len(perms)):
+        attempts += 1
+        if int(reconstruct_secret(perms[z][0:MIN_RECONSTRUCT])) == SECRET:
+            success += 1
+        else:
+            # print(f'Result was {int(reconstruct_secret(perms[z][0:MIN_RECONSTRUCT]))}, expected {SECRET}, actual value was {reconstruct_secret(perms[z][0:MIN_RECONSTRUCT])}')
+            bad_sets.append(perms[z][0:MIN_RECONSTRUCT])
+
+    print(f'Tries: {attempts}, successes: {success}, rate {success/attempts*100}%')
+    print(bad_sets)
+    # for set in bad_sets:
+    #     numbers = []
+    #     for i in set:
+    #         numbers.append(i[0])
+    #     numbers.sort()
+    #     print(numbers)
+    #     print("===")
