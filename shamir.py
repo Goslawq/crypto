@@ -1,6 +1,7 @@
 import random
 import itertools
 from math import ceil
+from operator import inv
 
 MAX_COEFF = 10**4
 
@@ -27,7 +28,7 @@ def reconstruct_secret(shares):
             if i != j:
                 # print(f'xj = {xj}, xi = {xi}')
                 # print(f'rownanie {i} to {xj / (xj - xi)}')
-                prod *= (xj / (xj - xi))
+                prod *= xj * pow(xj - xi, -1, mod)
 
         # print(f'Iloczyn równań to {prod}')
         prod *= yi
@@ -76,7 +77,7 @@ def generate_shares(n, m, secret, mod):
 if __name__ == "__main__":
     shares = generate_shares(SHARES, MIN_RECONSTRUCT, SECRET, PRIME)
     print(f'Wygenerowano udziały {shares}')
-    for i in range(3):
+    for z in range(3):
         print(" ")
         pool = random.sample(shares, MIN_RECONSTRUCT)
         print(f'Na podstawie {pool}')
@@ -87,14 +88,15 @@ if __name__ == "__main__":
     success = 0
     bad_sets = []
     perms = list(itertools.permutations(shares))
-    for i in range(len(perms)):
+    for z in range(len(perms)):
         attempts += 1
-        if int(reconstruct_secret(perms[i][0:MIN_RECONSTRUCT])) == SECRET:
+        if int(reconstruct_secret(perms[z][0:MIN_RECONSTRUCT])) == SECRET:
             success += 1
         else:
-            bad_sets.append(perms[i][0:MIN_RECONSTRUCT])
+            bad_sets.append(perms[z][0:MIN_RECONSTRUCT])
 
     print(f'Tries: {attempts}, successes: {success}, rate {success/attempts*100}%')
     print(bad_sets)
     for set_ in bad_sets:
-        print(reconstruct_secret(set_))
+        pass
+        # print(reconstruct_secret(set_))
