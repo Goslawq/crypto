@@ -24,12 +24,12 @@ def encode_message(image):
                         temp_y = y * 2 + 1
                     if random() < 0.5:
                         share1[temp_y][temp_x] = 0
-                        if random() < 0.25:
-                            share2[temp_y][temp_x] = 0
+                        # if random() < 0.25:
+                        #     share2[temp_y][temp_x] = 0
                     else:
                         share2[temp_y][temp_x] = 0
-                        if random() < 0.25:
-                            share1[temp_y][temp_x] = 0
+                        # if random() < 0.25:
+                        #     share1[temp_y][temp_x] = 0
             else:
                 p1 = False
                 p2 = False
