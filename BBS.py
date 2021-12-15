@@ -1,5 +1,5 @@
 from random import randrange, sample
-from sympy import isprime, primerange
+from sympy import primerange
 from math import gcd
 
 MIN = 1000000
@@ -17,12 +17,12 @@ def generate_primes(min, max):
     return x, y
 
 
-def bbs_generator(len, N, min=MIN, max=MAX):
+def bbs_generator(leng, N, mini=MIN, maxi=MAX):
     random_string = ""
-    x = randrange(min, max)
+    x = randrange(mini, maxi)
     while gcd(N, x) != 1:
-        x = randrange(min, max)
-    for i in range(len):
+        x = randrange(mini, maxi)
+    for i in range(leng):
         x = (x ** 2) % N
         random_string = random_string + str(x % 2)
     return random_string
@@ -104,7 +104,7 @@ def convert_from_binary(string):
     for i, bit in enumerate(string):
         if not (bit == "0" or bit == "1"):
             raise ValueError("Provided string did not contain only zeroes and ones")
-        ret += int(bit) * (2**(msb-i))
+        ret += int(bit) * (2 ** (msb - i))
     return ret
 
 
@@ -113,7 +113,7 @@ def poker_test_engine(string):
     if len(string) % 4 != 0:
         raise ValueError("długość ciągu powinna być podzielna przez 4")
     for i in range(0, len(string), 4):
-        decimal = str(convert_from_binary(string[i:i+4]))
+        decimal = str(convert_from_binary(string[i:i + 4]))
         if decimal not in ret:
             ret[decimal] = 1
         else:
@@ -125,8 +125,8 @@ def poker_test(string):
     wdict = poker_test_engine(string)
     inter_value = 0
     for value in wdict.values():
-        inter_value += value*value
-    test_result = 16/5000 * inter_value - 5000
+        inter_value += value * value
+    test_result = 16 / 5000 * inter_value - 5000
     return True if 2.16 < test_result < 46.17 else False
 
 
@@ -137,7 +137,6 @@ def run_all_tests(string):
     if len(string) > 20000:
         print("Testy zostały przygotowane dla ciągów o długości 20000, użyto pierwszych 20000 bitów danego ciągu")
         string = string[:20000]
-        print(len(string))
     if not counter_test(string):
         print("Failed counter test")
         ret = False
