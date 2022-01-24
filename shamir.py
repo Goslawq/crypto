@@ -1,12 +1,13 @@
 import random
 import itertools
-
+from math import ceil
+from operator import inv
 
 MAX_COEFF = 10**4
 
 SHARES = 5
 MIN_RECONSTRUCT = 3
-SECRET = 1234
+SECRET = 614
 PRIME = 65537
 
 
@@ -27,7 +28,7 @@ def reconstruct_secret(shares):
             if i != j:
                 # print(f'xj = {xj}, xi = {xi}')
                 # print(f'rownanie {i} to {xj / (xj - xi)}')
-                prod *= (xj / (xj - xi))
+                prod *= xj * pow(xj - xi, -1, mod)
 
         # print(f'Iloczyn równań to {prod}')
         prod *= yi
@@ -59,22 +60,15 @@ def generate_polynomial(t, secret):
 
 
 def generate_shares(n, m, secret, mod):
-    """
-    Generuje n udziałów sekretu secret, gdzie wystarczy m do jego odbudowania
-    :param n: liczba generowanych udziałów
-    :param m: threshold
-    :param secret: sekret do podziału
-    :return: zwraca listę udziałów
-    """
     polynom = generate_polynomial(m, secret)
-    print(f'Wielomian {polynom}')
+    print(f'Polynomial {polynom}')
     shares = []
     generated = []
 
     for i in range(1, n+1):
-        print("TERM", i)
-        print(find_x(i + 1, polynom))
-        print(find_x(i + 1, polynom) % mod)
+        # print("TERM", i)
+        # print(find_x(i + 1, polynom))
+        # print(find_x(i + 1, polynom) % mod)
         shares.append((i, (find_x(i, polynom) % mod), mod))
 
     return shares
@@ -99,15 +93,10 @@ if __name__ == "__main__":
         if int(reconstruct_secret(perms[z][0:MIN_RECONSTRUCT])) == SECRET:
             success += 1
         else:
-            # print(f'Result was {int(reconstruct_secret(perms[z][0:MIN_RECONSTRUCT]))}, expected {SECRET}, actual value was {reconstruct_secret(perms[z][0:MIN_RECONSTRUCT])}')
             bad_sets.append(perms[z][0:MIN_RECONSTRUCT])
 
     print(f'Tries: {attempts}, successes: {success}, rate {success/attempts*100}%')
     print(bad_sets)
-    # for set in bad_sets:
-    #     numbers = []
-    #     for i in set:
-    #         numbers.append(i[0])
-    #     numbers.sort()
-    #     print(numbers)
-    #     print("===")
+    for set_ in bad_sets:
+        pass
+        # print(reconstruct_secret(set_))
